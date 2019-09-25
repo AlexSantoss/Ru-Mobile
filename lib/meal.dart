@@ -47,7 +47,7 @@ class _MealScreenState extends State<MealScreen> {
       child: Scaffold(
         backgroundColor: widget.bgColor,
         body: Opacity(
-          opacity: appStatus.tabsAnimation.opacity?.value?.abs() ?? 1,
+          opacity: appStatus.opacityPercent,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

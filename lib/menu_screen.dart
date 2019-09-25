@@ -18,7 +18,7 @@ class MyHomePage extends StatefulWidget{
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin{
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
   ScrollController controller = ScrollController();
 
   AppStatus appStatus;
@@ -40,6 +40,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
     appStatus.screenWidth = MediaQuery.of(context).size.width;
     appStatus.screenHeight = MediaQuery.of(context).size.height;
+
+    appStatus.controller = AnimationController(
+        duration: Duration(milliseconds: 400),
+        vsync: this);
 
     if(appStatus.tabsAnimation == null) appStatus.setTabAnimation(
         ChangeTabAnimation(

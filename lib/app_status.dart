@@ -36,17 +36,42 @@ class AppStatus with ChangeNotifier {
     attOpacity();
   }
 
-  endDrag(double velocity) {
-    if(velocity.abs() > 100) _atualScreen = (velocity > 0)? _atualScreen.floorToDouble() : _atualScreen.ceilToDouble();
-    else _atualScreen = _atualScreen.roundToDouble();
+  AnimationController controller;
+  Animation<double> _opacityTransition;
 
-    attOpacity();
-    print(_atualScreen);
+  endDrag(double velocity) {
+    int end;
+
+    if(velocity.abs() > 100) end = (velocity > 0)? _atualScreen.floor() : _atualScreen.ceil();
+    else end = _atualScreen.round();
+
+    toPage(end);
   }
+
+  getAtualScreen() => _atualScreen;
 
   attOpacity() {
     double decimal = _atualScreen-_atualScreen.floor();
     opacityPercent = (decimal - 0.5).abs() * 2;
+
+    _selectedDay = _atualScreen.round();
+
+    notifyListeners();
+  }
+
+  toPage(int page) {
+    _opacityTransition = Tween(
+        begin: _atualScreen,
+        end: page.toDouble()
+    ).animate(CurvedAnimation(
+        parent: controller,
+        curve: Curves.decelerate))
+      ..addListener(() {
+        _atualScreen = _opacityTransition.value;
+        attOpacity();
+      });
+
+    controller.forward();
   }
 
   getDayMeal() => _dayMeal[_selectedDay];
@@ -71,11 +96,11 @@ class AppStatus with ChangeNotifier {
 
   setTabAnimation(ChangeTabAnimation changeTabAnimation) {
     tabsAnimation = changeTabAnimation;
-    tabsAnimation.controller.addListener(() {
-      if (_nextSelectedDay != _selectedDay &&
-          tabsAnimation.opacity.value >= 0) {
-        _selectedDay = _nextSelectedDay;
-      }
-    });
+//    tabsAnimation.controller.addListener(() {
+//      if (_nextSelectedDay != _selectedDay &&
+//          tabsAnimation.opacity.value >= 0) {
+//        _selectedDay = _nextSelectedDay;
+//      }
+//    });
   }
 }
