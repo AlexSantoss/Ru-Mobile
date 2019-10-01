@@ -24,9 +24,9 @@ class _MealScreenState extends State<MealScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      appStatus.tabsAnimation.controller.addListener(() => setState(() {}));
-    });
+    //Future.delayed(Duration.zero, () {
+    //  appStatus.controller.addListener(() => setState(() {}));
+    //});
   }
 
   @override

@@ -13,7 +13,7 @@ class _CustomTab extends State<CustomTab>{
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(_attConstsAndStartAnimation);
+    WidgetsBinding.instance.addPostFrameCallback(_attConsts);
   }
 
 //  GlobalKey _selectedTab = GlobalKey();
@@ -79,12 +79,7 @@ class _CustomTab extends State<CustomTab>{
   void setSelected(int idx) {
     appStatus.setSelectedDay(idx);
     appStatus.notify();
-    WidgetsBinding.instance.addPostFrameCallback(_attConstsAndStartAnimation);
-  }
-
-  _attConstsAndStartAnimation(_) {
-    _attConsts(0);
-    appStatus.tabsAnimation.startTabTransition(_selectedPosition.dx);
+    WidgetsBinding.instance.addPostFrameCallback(_attConsts);
   }
 
   _attConsts(_) {

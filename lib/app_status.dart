@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'change_tab_animation.dart';
-
 class AppStatus with ChangeNotifier {
   List _dayMeal = [];
 
@@ -17,8 +15,6 @@ class AppStatus with ChangeNotifier {
 
   double screenWidth;
   double screenHeight;
-
-  ChangeTabAnimation tabsAnimation;
 
   AppStatus(this._selectedDay, this._scrollPercent, this._offset) {
     for (var i = 0; i < 7; i++) {
@@ -71,6 +67,7 @@ class AppStatus with ChangeNotifier {
         attOpacity();
       });
 
+    controller.reset();
     controller.forward();
   }
 
@@ -93,14 +90,4 @@ class AppStatus with ChangeNotifier {
   getNextSelectedDay() => _nextSelectedDay;
 
   notify() => notifyListeners();
-
-  setTabAnimation(ChangeTabAnimation changeTabAnimation) {
-    tabsAnimation = changeTabAnimation;
-//    tabsAnimation.controller.addListener(() {
-//      if (_nextSelectedDay != _selectedDay &&
-//          tabsAnimation.opacity.value >= 0) {
-//        _selectedDay = _nextSelectedDay;
-//      }
-//    });
-  }
 }

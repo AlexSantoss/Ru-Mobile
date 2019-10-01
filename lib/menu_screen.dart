@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hello_world/change_tab_animation.dart';
 import 'package:hello_world/enums.dart';
 import 'package:hello_world/meal.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +17,7 @@ class MyHomePage extends StatefulWidget{
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin{
   ScrollController controller = ScrollController();
 
   AppStatus appStatus;
@@ -41,16 +40,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
     appStatus.screenWidth = MediaQuery.of(context).size.width;
     appStatus.screenHeight = MediaQuery.of(context).size.height;
 
-    appStatus.controller = AnimationController(
+    if(appStatus.controller == null) appStatus.controller = AnimationController(
         duration: Duration(milliseconds: 400),
         vsync: this);
-
-    if(appStatus.tabsAnimation == null) appStatus.setTabAnimation(
-        ChangeTabAnimation(
-            AnimationController(
-                duration: Duration(milliseconds: 400),
-                vsync: this)
-        ));
 
     return Scaffold(
       body: GestureDetector(
