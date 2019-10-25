@@ -1,3 +1,4 @@
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_world/enums.dart';
 import 'package:hello_world/meal.dart';
@@ -7,8 +8,8 @@ import 'app_status.dart';
 import 'custom_tab.dart';
 
 
-Color day = Color(0xffe9c46a);
-Color night = Color(0xff26547c);
+Color day = Color(0xff25cbff);
+Color night = Color(0xff08061e);
 
 class MyHomePage extends StatefulWidget{
   MyHomePage({Key key}) : super(key: key);
@@ -31,6 +32,16 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
   void scrollToMid(){
     controller.jumpTo(controller.position.maxScrollExtent/2);
+  }
+
+  void scrollTo(percent){
+    var dest = 0.0;
+
+    if(percent < 0.25) dest = 0;
+    else if(percent < 0.75) dest = controller.position.maxScrollExtent/2;
+    else dest = controller.position.maxScrollExtent;
+
+    controller.animateTo(dest, duration: Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
   }
 
   @override
@@ -57,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             SliverList(
                 delegate: SliverChildListDelegate( [
                   GestureDetector(
-                    onTap: (){controller.animateTo(0, duration: Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);},
+                    onTap: () => scrollTo(0),
                     child: MealScreen(
                       type: Meal.lunch,
                       bgColor: day,
@@ -66,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   ),
                   CustomTab(),
                   GestureDetector(
-                    onTap: (){controller.animateTo(controller.position.maxScrollExtent, duration: Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);},
+                    onTap: () => scrollTo(1),
                     child: MealScreen(
                       type: Meal.dinner,
                       bgColor: night,
