@@ -20,7 +20,7 @@ class FlareSunAndMoon extends StatelessWidget  with FlareController{
     if(appStatus == null) appStatus = Provider.of<AppStatus>(context);
 
     return Container(
-      height: 214,
+      height: appStatus.screenWidth,
       width: appStatus.screenWidth,
       child: FlareActor(
         (type == Meal.dinner)? 'assets/moon.flr' : 'assets/sun.flr',
