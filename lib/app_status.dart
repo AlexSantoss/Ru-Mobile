@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
+import 'dart:collection';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 class AppStatus with ChangeNotifier {
   List _dayMeal = [];
 
@@ -19,8 +22,31 @@ class AppStatus with ChangeNotifier {
   AppStatus(this._selectedDay, this._scrollPercent, this._offset) {
     for (var i = 0; i < 7; i++) {
       _dayMeal.add([]);
-      for (var j = 0; j < 7; j++) _dayMeal[i].add("teste" + i.toString());
+      for (var j = 0; j < 14; j++) _dayMeal[i].add("teste" + i.toString());
     }
+    fetchMenu();
+  }
+
+  fetchMenu() async {
+    var link = "https://spreadsheets.google.com/feeds/list/1YvCqBrNw5l4EFNplmpRBFrFJpjl4EALlVNDk3pwp_dQ/1/public/values?alt=json";
+    http.get(link).then((response) {
+      int auxi = 0, auxj=0;
+      for(final row in json.decode(response.body)["feed"]["entry"]){
+
+        var sheet = LinkedHashMap.from(row)
+          ..removeWhere((k, _) => !k.startsWith("gsx"));
+        if( sheet.length != 8 ||
+            sheet["gsx\$_cn6ca"]["\$t"] == "JANTAR" ||
+            sheet["gsx\$_cn6ca"]["\$t"] == "ALMOÇO") continue;
+        sheet.removeWhere((k, _) => k == "gsx\$_cn6ca");
+        for(final column in sheet.entries){
+          _dayMeal[auxj++][auxi] = column.value["\$t"].toString().replaceAll("\n", "");
+        }
+
+        auxi++;
+        auxj = 0;
+      }
+    });
   }
 
   updateDrag(double d) {
@@ -72,7 +98,7 @@ class AppStatus with ChangeNotifier {
   }
 
   getDayMeal() => _dayMeal[_selectedDay];
-  getDayMealOf(int type) => _dayMeal[_selectedDay][type];
+  getDayMealOf(int type, int dayOrNight) => _dayMeal[_selectedDay][type + dayOrNight*7];
 
   getScrollPercent() => _scrollPercent;
   setScrollPercent(double scrollPercent) => _scrollPercent = scrollPercent;

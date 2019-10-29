@@ -57,7 +57,7 @@ class _MealSubitemState extends State<MealSubitem> {
                             fontWeight: FontWeight.bold
                         )
                     ),
-                    Text(appStatus.getDayMealOf(widget.type),
+                    Text(appStatus.getDayMealOf(widget.type, side),
                         style: new TextStyle(
                           fontSize: 16,
                           color: widget.color,
@@ -73,13 +73,14 @@ class _MealSubitemState extends State<MealSubitem> {
 
   String chooseType(int i){
     switch(i){
-      case 0: return "Acompanhamento";
-      case 1: return "Entrada";
-      case 2: return "Guarnicao";
-      case 3: return "Prato Principal";
-      case 4: return "Prato Vegetariano";
-      case 5: return "Refresco";
-      default: return "Sobremesa";
+      case 0: return "Entrada";
+      case 1: return "Prato Principal";
+      case 2: return "Prato Vegetariano";
+      case 3: return "Guarnicao";
+      case 4: return "Acompanhamento";
+      case 5: return "Sobremesa";
+      case 6: return "Refresco";
+      default: return "";
     }
   }
 }
