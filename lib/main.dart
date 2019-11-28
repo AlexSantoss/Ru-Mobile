@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: ChangeNotifierProvider<AppStatus>(
-        builder: (_) => AppStatus(0, 0, 0),
+        builder: (_) => AppStatus(DateTime.now().weekday - 1.0),
         child: MyHomePage(),
       ),
     );

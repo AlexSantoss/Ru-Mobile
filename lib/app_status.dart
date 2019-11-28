@@ -9,17 +9,18 @@ class AppStatus with ChangeNotifier {
   double _scrollPercent = 0.0;
   double _offset = 0.0;
 
+  int _selectedDay = 0;
   double _atualScreen = 0;
   double opacityPercent = 1;
-
-  int _lastSelectedDay = 0;
-  int _selectedDay = 0;
-  int _nextSelectedDay = 0;
 
   double screenWidth;
   double screenHeight;
 
-  AppStatus(this._selectedDay, this._scrollPercent, this._offset) {
+  AnimationController controller;
+
+  AppStatus(this._atualScreen) {
+    _selectedDay = _atualScreen.round();
+
     for (var i = 0; i < 7; i++) {
       _dayMeal.add([]);
       for (var j = 0; j < 14; j++) _dayMeal[i].add("teste" + i.toString());
@@ -46,7 +47,55 @@ class AppStatus with ChangeNotifier {
         auxi++;
         auxj = 0;
       }
+      notifyListeners();
     });
+  }
+
+  getMeal() => _meal;
+
+  double _meal = 0;
+  int _selectedMeal = 0;
+  updateType(double d) {
+    _meal -= d;
+    _meal = _meal%2;
+
+    attMeal();
+  }
+
+  endType(double velocity) {
+    int end;
+
+    if(velocity.abs() > 100) end = (velocity > 0)? _meal.floor() : _meal.ceil();
+    else end = _meal.round();
+
+    toMeal(end);
+  }
+
+  bool animatingMeal;
+  toMeal(int meal) {
+    animatingMeal = true;
+    final opacityTransition = Tween(
+        begin: _meal,
+        end: meal.toDouble()
+    ).animate(CurvedAnimation(
+        parent: controller,
+        curve: Curves.decelerate));
+
+    opacityTransition.addListener(() {
+      if(!animatingMeal) return;
+
+      _meal = opacityTransition.value;
+      attMeal();
+    });
+
+
+    controller.reset();
+    controller.forward();
+  }
+
+  attMeal(){
+    _selectedMeal = _meal.round();
+    notifyListeners();
   }
 
   updateDrag(double d) {
@@ -58,9 +107,6 @@ class AppStatus with ChangeNotifier {
     attOpacity();
   }
 
-  AnimationController controller;
-  Animation<double> _opacityTransition;
-
   endDrag(double velocity) {
     int end;
 
@@ -70,50 +116,45 @@ class AppStatus with ChangeNotifier {
     toPage(end);
   }
 
-  getAtualScreen() => _atualScreen;
-
   attOpacity() {
     double decimal = _atualScreen-_atualScreen.floor();
     opacityPercent = (decimal - 0.5).abs() * 2;
 
     _selectedDay = _atualScreen.round();
-
     notifyListeners();
   }
 
   toPage(int page) {
-    _opacityTransition = Tween(
+    animatingMeal = false;
+    final opacityTransition = Tween(
         begin: _atualScreen,
         end: page.toDouble()
     ).animate(CurvedAnimation(
         parent: controller,
-        curve: Curves.decelerate))
-      ..addListener(() {
-        _atualScreen = _opacityTransition.value;
-        attOpacity();
-      });
+        curve: Curves.decelerate));
+
+    opacityTransition.addListener(() {
+      if(animatingMeal) return;
+
+      _atualScreen = opacityTransition.value;
+      attOpacity();
+    });
 
     controller.reset();
     controller.forward();
   }
 
   getDayMeal() => _dayMeal[_selectedDay];
-  getDayMealOf(int type, int dayOrNight) => _dayMeal[_selectedDay][type + dayOrNight*7];
+  getDayMealOf(int type) => _dayMeal[_selectedDay][type + (_selectedMeal % 2) * 7];
 
   getScrollPercent() => _scrollPercent;
   setScrollPercent(double scrollPercent) => _scrollPercent = scrollPercent;
 
   getOffset() => _offset;
-
   setOffset(double offset) => _offset = offset;
-  setSelectedDay(int selectedDay) {
-    _nextSelectedDay = selectedDay;
-    _lastSelectedDay = _selectedDay;
-  }
-  getLastSelectedDay() => _lastSelectedDay;
-  getSelectedDay() => _selectedDay;
 
-  getNextSelectedDay() => _nextSelectedDay;
+  getSelectedDay() => _selectedDay;
+  getAtualScreen() => _atualScreen;
 
   notify() => notifyListeners();
 }
