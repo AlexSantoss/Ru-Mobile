@@ -13,36 +13,39 @@ class MealScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final appStatus = Provider.of<AppStatus>(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(7,
-        (idx) => Column(
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Text(
-                chooseType(idx),
-                textAlign: TextAlign.start,
-                style: new TextStyle(
-                    fontSize: 20,
-                    color: textColor,
-                    fontWeight: FontWeight.bold
-                )
-            ),
-            Text(
-                appStatus.getDayMealOf(idx),
-                textAlign: TextAlign.start,
-                style: new TextStyle(
-                  fontSize: 16,
-                  color: textColor,
-                )
-            )
-          ],
-        )
-      )
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(7,
+                  (idx) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Text(
+                      chooseType(idx),
+                      textAlign: TextAlign.start,
+                      style: new TextStyle(
+                          fontSize: 20,
+                          color: textColor,
+                          fontWeight: FontWeight.bold
+                      )
+                  ),
+                  Text(
+                      appStatus.getDayMealOf(idx),
+                      textAlign: TextAlign.start,
+                      style: new TextStyle(
+                        fontSize: 16,
+                        color: textColor,
+                      )
+                  )
+                ],
+              )
+          )
+      ),
     );
   }
 

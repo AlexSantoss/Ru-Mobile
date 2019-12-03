@@ -10,10 +10,6 @@ import 'package:provider/provider.dart';
 import 'app_status.dart';
 import 'meal.dart';
 
-
-Color day = Color(0xff25cbff);
-Color night = Color(0xff08061e);
-
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
 
@@ -24,6 +20,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin{
 
   ScrollController _controller = ScrollController();
+  static final _bgTween  = ColorTween(begin: Color(0xff25cbff), end: Color(0xff08061e));
+  static final _txtTween = ColorTween(begin: Color(0xff08061e), end: Color(0xff25cbff));
 
   @override
   void initState() {
@@ -35,67 +33,71 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   bool aux = true;
   void scrollTo(percent){
     aux = false;
-    print(percent);
     WidgetsBinding.instance
         .addPostFrameCallback((_) =>
-    _controller.animateTo(
-        (percent < 0.40)? 0.0 : _controller.position.maxScrollExtent
-        , duration: Duration(milliseconds: 200), curve: Curves.fastOutSlowIn)
-        .whenComplete(() => aux = true));
+        _controller.animateTo(
+            (percent < 0.40)? 0.0 : _controller.position.maxScrollExtent
+            , duration: Duration(milliseconds: ((percent < 0.40)? 200 * percent / 0.4 : 300 * (1-(percent-0.4) / 0.6)).round())
+            , curve: Curves.fastOutSlowIn)
+            .whenComplete(() => aux = true));
   }
 
   @override
   Widget build(BuildContext context) {
     final appStatus = Provider.of<AppStatus>(context);
 
-    appStatus.screenWidth = MediaQuery.of(context).size.width;
-    appStatus.screenHeight = MediaQuery.of(context).size.height;
+    final w = MediaQuery.of(context).size.width;
+    final h = MediaQuery.of(context).size.height;
 
     if(appStatus.controller == null) appStatus.controller = AnimationController(
         duration: Duration(milliseconds: 400),
         vsync: this);
 
     return Scaffold(
-        body: NotificationListener(
-          onNotification: (t) {
-            if(t is ScrollEndNotification && aux) scrollTo(_controller.offset/_controller.position.maxScrollExtent);
-            return true;
-          },
-          child: ListView(
-              controller: _controller,
-              children: <Widget>[
-                Configuration(),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height*0.95,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onHorizontalDragUpdate:
-                              (details) => appStatus.updateDrag(details.delta.dx / appStatus.screenWidth),
-                          onHorizontalDragEnd:
-                              (details) => appStatus.endDrag(details.primaryVelocity),
-                          child:
-                          MealScreen( textColor: day),
+        body: Container(
+          color: _bgTween.transform((appStatus.getMeal() <= 1)? appStatus.getMeal() : 2 - appStatus.getMeal() ),
+          child: NotificationListener(
+            onNotification: (t) {
+              if(t is ScrollEndNotification && aux) scrollTo(_controller.offset/_controller.position.maxScrollExtent);
+              return true;
+            },
+            child: ListView(
+                controller: _controller,
+                children: <Widget>[
+                  Configuration(),
+                  Container(
+                    height: h*0.95,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onHorizontalDragUpdate:
+                                (details) => appStatus.updateDrag(details.delta.dx / w),
+                            onHorizontalDragEnd:
+                                (details) => appStatus.endDrag(details.primaryVelocity),
+                            child: Opacity(
+                              child: MealScreen( textColor: _txtTween.transform((appStatus.getMeal() <= 1)? appStatus.getMeal() : 2 - appStatus.getMeal() )),
+                              opacity: appStatus.opacityPercent,
+                            ),
+                          ),
                         ),
-                      ),
-                      DaySwitch(),
-                      GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onHorizontalDragUpdate:
-                              (details) => appStatus.updateType(details.delta.dx / appStatus.screenWidth),
-                          onHorizontalDragEnd:
-                              (details) => appStatus.endType(details.primaryVelocity),
-                          child: Stack(children: <Widget>[TypeSwitch(Meal.lunch), TypeSwitch(Meal.dinner)] )
-                      )
-                    ],
+                        DaySwitch(),
+                        GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onHorizontalDragUpdate:
+                                (details) => appStatus.updateType(details.delta.dx / w),
+                            onHorizontalDragEnd:
+                                (details) => appStatus.endType(details.primaryVelocity),
+                            child: Stack(children: <Widget>[TypeSwitch(Meal.lunch), TypeSwitch(Meal.dinner)] )
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ]
+                ]
+            ),
           ),
         )
     );
@@ -108,7 +110,7 @@ class Configuration extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height*0.2,
       width: MediaQuery.of(context).size.width,
-      color: Color.fromRGBO(0, 0, 0, 0.5),
+      color: Colors.blueGrey,
     );
   }
 }
@@ -116,10 +118,17 @@ class Configuration extends StatelessWidget {
 class DaySwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    List<Widget> a = [];
+    for(int i=0; i < 7; i++)
+      a.add(Text("Seg", style: TextStyle(fontSize: 20),));
+
     return Container(
       height: MediaQuery.of(context).size.height*0.05,
       width: MediaQuery.of(context).size.width,
-      color: Color.fromRGBO(255, 0, 0, 0.5),
+      color: Color.fromRGBO(255, 255, 255, 0.3),
+      child: Row(
+        children: a,
+      ),
     );
   }
 
@@ -127,7 +136,7 @@ class DaySwitch extends StatelessWidget {
 
 class TypeSwitch extends StatelessWidget  with FlareController{
   TypeSwitch(this.type, {Key key}) : super(key: key);
-  Meal type;
+  final Meal type;
 
   ActorAnimation _natural;
   ActorAnimation _rotating;
@@ -141,7 +150,7 @@ class TypeSwitch extends StatelessWidget  with FlareController{
       height: MediaQuery.of(context).size.width/2,
       width: MediaQuery.of(context).size.width,
       child: FlareActor(
-        (type == Meal.lunch)? 'assets/sun.flr': 'assets/moon.flr',
+        type.file,
         controller: this,
         fit: BoxFit.contain,
       ),
