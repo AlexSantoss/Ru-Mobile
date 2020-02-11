@@ -7,8 +7,12 @@ class AppStatus with ChangeNotifier  {
   List _dayMeal = [];
 
   int _selectedDay = 0;
+  int _nextDay = 1;
   double _atualScreen = 0;
   double opacityPercent = 1;
+
+  double _meal = 0;
+  int _selectedMeal = 0;
 
   AnimationController controller;
 
@@ -53,8 +57,6 @@ class AppStatus with ChangeNotifier  {
 
   getMeal() => _meal;
 
-  double _meal = 0;
-  int _selectedMeal = 0;
   updateType(double d) {
     _meal -= d;
     _meal = _meal%2;
@@ -100,6 +102,7 @@ class AppStatus with ChangeNotifier  {
 
   updateDrag(double d) {
     _atualScreen -= d;
+    _nextDay = (d < 0)? _selectedDay + 1 : _selectedDay - 1;
 
     if(_atualScreen < 0) _atualScreen = 0;
     else if(_atualScreen > 6) _atualScreen = 6;
@@ -125,6 +128,9 @@ class AppStatus with ChangeNotifier  {
   }
 
   toPage(int page) {
+    _nextDay = page;
+
+    double atScr = _atualScreen;
     animatingMeal = false;
     final opacityTransition = Tween(
         begin: _atualScreen,
@@ -135,9 +141,18 @@ class AppStatus with ChangeNotifier  {
 
     opacityTransition.addListener(() {
       if(animatingMeal) return;
-
       _atualScreen = opacityTransition.value;
-      attOpacity();
+
+      if(atScr == atScr.ceil()){
+        double interval = page.toDouble()-atScr, act = opacityTransition.value - atScr;
+        double p = act / interval;
+
+        opacityPercent = ((p*2)-1).abs();
+        _selectedDay = (p < 0.5)? atScr.round() : page;
+
+        notifyListeners();
+      } else
+        attOpacity();
     });
 
     controller.reset();
@@ -146,6 +161,9 @@ class AppStatus with ChangeNotifier  {
 
   getDayMeal() => _dayMeal[_selectedDay];
   getDayMealOf(int type) => _dayMeal[_selectedDay][type + (_selectedMeal % 2) * 7];
+
+  getAtualScreen() => _atualScreen;
+  getSelectedDay() => _selectedDay;
 
   notify() => notifyListeners();
 }

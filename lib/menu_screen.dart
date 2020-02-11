@@ -8,6 +8,7 @@ import 'package:hello_world/enums.dart';
 import 'package:provider/provider.dart';
 
 import 'app_status.dart';
+import 'day_switch.dart';
 import 'meal.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -113,25 +114,6 @@ class Configuration extends StatelessWidget {
       color: Colors.blueGrey,
     );
   }
-}
-
-class DaySwitch extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> a = [];
-    for(int i=0; i < 7; i++)
-      a.add(Text("Seg", style: TextStyle(fontSize: 20),));
-
-    return Container(
-      height: MediaQuery.of(context).size.height*0.05,
-      width: MediaQuery.of(context).size.width,
-      color: Color.fromRGBO(255, 255, 255, 0.3),
-      child: Row(
-        children: a,
-      ),
-    );
-  }
-
 }
 
 class TypeSwitch extends StatelessWidget  with FlareController{
