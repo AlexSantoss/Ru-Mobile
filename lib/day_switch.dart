@@ -75,18 +75,24 @@ class _DaySwitchState extends State<DaySwitch> {
       );
   }
 
-  Widget createSelector(AppStatus as) => Transform.translate(
-    offset: makeOffsetStuff(as.getNextDay(), as.animationPercent, as.getAtualScreen()),
-    child: Container(
-      key: indicator,
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: widget.primaryColor,
-        shape: BoxShape.circle,
+  Widget createSelector(AppStatus as) {
+    double fix = (as.animationPercent == 1)? 40 : 20+20*(1-(as.getNextDay() - as.getStartDay()).abs()/6);
+    double un = 40-fix;
+    double sPercent = (as.animationPercent * 2 - 1).abs();
+
+    return Transform.translate(
+      offset: makeOffsetStuff(as.getNextDay(), as.animationPercent, as.getAtualScreen()),
+      child: Container(
+        key: indicator,
+        width: fix + un * sPercent,
+        height: fix + un * sPercent,
+        decoration: BoxDecoration(
+          color: widget.primaryColor,
+          shape: BoxShape.circle,
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   Offset atualOff = Offset.zero;
   makeOffsetStuff(int next, double ani, double atual){
