@@ -3,6 +3,10 @@ import 'package:hello_world/app_status.dart';
 import 'package:provider/provider.dart';
 
 class DaySwitch extends StatefulWidget {
+  DaySwitch({Key key, this.primaryColor, this.secundaryColor}): super(key: key);
+  final Color primaryColor;
+  final Color secundaryColor;
+
   @override
   _DaySwitchState createState() => _DaySwitchState();
 }
@@ -16,14 +20,14 @@ class _DaySwitchState extends State<DaySwitch> {
   Widget build(BuildContext context) {
     AppStatus appStatus = Provider.of<AppStatus>(context);
 
+    final s = ["S", "T", "Q", "Q", "S", "S", "D"];
     List<Widget> days = [];
     for(int i=0; i < 7; i++) {
       keys.add(GlobalKey());
-      days.add(createTab(i, "S", appStatus));
+      days.add(createTab(i, s[i], appStatus));
     }
     return Container(
         width: MediaQuery.of(context).size.width,
-        color: Color.fromRGBO(255, 255, 255, 0.3),
         child: Stack(
           alignment: AlignmentDirectional.centerStart,
           children: <Widget>[
@@ -35,6 +39,8 @@ class _DaySwitchState extends State<DaySwitch> {
   }
 
   Widget createTab(int idx, String text, AppStatus as) {
+    final _txtTween = ColorTween(begin: widget.primaryColor, end: widget.secundaryColor);
+
     if(as.getSelectedDay() == idx) {
       return Expanded(
           flex: 100 + (as.opacityPercent*15).round(),
@@ -43,7 +49,9 @@ class _DaySwitchState extends State<DaySwitch> {
             key: keys[idx],
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: 20.0 + 10 * as.opacityPercent
+                color: _txtTween.transform(as.opacityPercent),
+                fontSize: 25.0 + 10 * as.opacityPercent,
+                fontWeight: FontWeight.w900
             ),
           )
       );
@@ -58,7 +66,9 @@ class _DaySwitchState extends State<DaySwitch> {
               key: keys[idx],
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 20.0
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.w700,
+                  color: widget.primaryColor
               ),
             ),
           )
@@ -69,10 +79,10 @@ class _DaySwitchState extends State<DaySwitch> {
     offset: makeOffsetStuff(as.getNextDay(), as.animationPercent, as.getAtualScreen()),
     child: Container(
       key: indicator,
-      width: 35,
-      height: 35,
+      width: 40,
+      height: 40,
       decoration: BoxDecoration(
-        color: Colors.orange,
+        color: widget.primaryColor,
         shape: BoxShape.circle,
       ),
     ),

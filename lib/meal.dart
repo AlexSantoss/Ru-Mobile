@@ -31,7 +31,7 @@ class MealScreen extends StatelessWidget {
                       style: new TextStyle(
                           fontSize: 20,
                           color: textColor,
-                          fontWeight: FontWeight.bold
+                          fontWeight: FontWeight.w300
                       )
                   ),
                   Text(
@@ -40,6 +40,7 @@ class MealScreen extends StatelessWidget {
                       style: new TextStyle(
                         fontSize: 16,
                         color: textColor,
+                          fontWeight: FontWeight.w500
                       )
                   )
                 ],

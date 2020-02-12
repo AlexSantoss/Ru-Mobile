@@ -85,7 +85,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                             ),
                           ),
                         ),
-                        DaySwitch(),
+                        DaySwitch(
+                          primaryColor: _txtTween.transform((appStatus.getMeal() <= 1)? appStatus.getMeal() : 2 - appStatus.getMeal() ),
+                          secundaryColor: _bgTween.transform((appStatus.getMeal() <= 1)? appStatus.getMeal() : 2 - appStatus.getMeal() ),
+                        ),
                         GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onHorizontalDragUpdate:
