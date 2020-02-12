@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'enums.dart';
 class AppStatus with ChangeNotifier  {
@@ -31,17 +32,28 @@ class AppStatus with ChangeNotifier  {
       _dayMeal.add([]);
       for (var j = 0; j < 14; j++) _dayMeal[i].add("teste" + i.toString());
     }
-    fetchMenu(ru);
+    getOption().then((str) => fetchMenu(str));
   }
 
-  fetchMenu(String opt) async {
+  saveOption() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('ru', ru);
+  }
+
+  Future<String> getOption() async {
+    return SharedPreferences.getInstance().then((prefs) => ru = prefs.getString('ru'));
+  }
+
+  fetchMenu(String opt) {
     String str = "";
     ru = opt;
 
-    if(opt == RUs.CT.value) str = "1YvCqBrNw5l4EFNplmpRBFrFJpjl4EALlVNDk3pwp_dQ";
-    else if(opt == RUs.PV.value) str = "1gymUpZ2m-AbDgH7Ee7uftbqWmKBVYxoToj28E8c-Dzc";
-//    else if(opt == RUs.DC.value) str = "1LBtA7knM0m-HIlsmMOym0eySM35d9f-WcsS9po4Luac";
-    else str = "1YvCqBrNw5l4EFNplmpRBFrFJpjl4EALlVNDk3pwp_dQ";
+    saveOption();
+
+    if(opt == RUs.CT.value) str = RUs.CT.link;
+    else if(opt == RUs.PV.value) str = RUs.PV.link;
+//    else if(opt == RUs.DC.value) str = RUs.DC.link;
+    else str = RUs.CT.link;
 
     var link = "https://spreadsheets.google.com/feeds/list/$str/1/public/values?alt=json";
     http.get(link)
