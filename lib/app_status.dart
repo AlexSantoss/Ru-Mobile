@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+import 'enums.dart';
 class AppStatus with ChangeNotifier  {
   List _dayMeal = [];
 
@@ -14,6 +16,8 @@ class AppStatus with ChangeNotifier  {
   double _atualScreen = 0;
   double opacityPercent = 1;
   double animationPercent = 1;
+
+  String ru = RUs.CT.value;
 
   double _meal = 0;
   int _selectedMeal = 0;
@@ -27,11 +31,19 @@ class AppStatus with ChangeNotifier  {
       _dayMeal.add([]);
       for (var j = 0; j < 14; j++) _dayMeal[i].add("teste" + i.toString());
     }
-    fetchMenu();
+    fetchMenu(ru);
   }
 
-  fetchMenu() async {
-    var link = "https://spreadsheets.google.com/feeds/list/1YvCqBrNw5l4EFNplmpRBFrFJpjl4EALlVNDk3pwp_dQ/1/public/values?alt=json";
+  fetchMenu(String opt) async {
+    String str = "";
+    ru = opt;
+
+    if(opt == RUs.CT.value) str = "1YvCqBrNw5l4EFNplmpRBFrFJpjl4EALlVNDk3pwp_dQ";
+    else if(opt == RUs.PV.value) str = "1gymUpZ2m-AbDgH7Ee7uftbqWmKBVYxoToj28E8c-Dzc";
+//    else if(opt == RUs.DC.value) str = "1LBtA7knM0m-HIlsmMOym0eySM35d9f-WcsS9po4Luac";
+    else str = "1YvCqBrNw5l4EFNplmpRBFrFJpjl4EALlVNDk3pwp_dQ";
+
+    var link = "https://spreadsheets.google.com/feeds/list/$str/1/public/values?alt=json";
     http.get(link)
       .then((response) {
         int auxi = 0, auxj=0;
