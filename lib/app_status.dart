@@ -129,12 +129,15 @@ class AppStatus with ChangeNotifier  {
   }
 
   updateDrag(double d) {
-    _atualScreen -= d;
+    double temp = _atualScreen - d;
 
-    if(_atualScreen < 0) _atualScreen = 0;
-    else if(_atualScreen > 6) _atualScreen = 6;
-    else _nextDay = (_atualScreen > _selectedDay)? _selectedDay+1 : _selectedDay-1;
-
+    if(temp < 0) temp = 0;
+    else if(temp > 6) temp = 6;
+    else {
+      if(temp > _selectedDay && _selectedDay < 6) _nextDay = _selectedDay + 1;
+      else if(temp < _selectedDay && _selectedDay > 0) _nextDay = _selectedDay - 1;
+    }
+    _atualScreen = temp;
     attOpacity();
   }
 
