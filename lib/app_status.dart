@@ -101,6 +101,11 @@ class AppStatus with ChangeNotifier  {
     toMeal(end);
   }
 
+  tapType(){
+    if(_meal == 0.0 || _meal == 2.0) toMeal(1);
+    else if(_meal == 1.0) toMeal(2);
+  }
+
   bool animatingMeal;
   toMeal(int meal) {
     animatingMeal = true;

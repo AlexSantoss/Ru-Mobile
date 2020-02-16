@@ -83,6 +83,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
                         (details) => appStatus.updateType(details.delta.dx / w),
                     onHorizontalDragEnd:
                         (details) => appStatus.endType(details.primaryVelocity),
+                    onTap:
+                        () => appStatus.tapType(),
                     child: Stack(children: <Widget>[TypeSwitch(Meal.lunch), TypeSwitch(Meal.dinner)] )
                 )
               ],
@@ -123,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
               left: 20,
               top: 10,
               child: Opacity(
-                opacity: (_settingsAnimation.value)/4,
+                  opacity: (_settingsAnimation.value)/4,
                   child: configuration(appStatus)
               ),
             ),
@@ -144,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin{
         elevation: 16,
         style: TextStyle(
           fontSize: 20,
-            color: _bgTween.transform((appStatus.getMeal() <= 1)? appStatus.getMeal() : 2 - appStatus.getMeal() ),
+          color: _bgTween.transform((appStatus.getMeal() <= 1)? appStatus.getMeal() : 2 - appStatus.getMeal() ),
         ),
         onChanged: (String newValue) {
           appStatus.fetchMenu(newValue);
